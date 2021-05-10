@@ -37,11 +37,29 @@ let responseObject = {}
 app.get('/api/timestamp/:input', (request, response) => {
   let input = request.params.input
   
-  if(input.includes(' ') || input.includes('-')){
+  if(input.includes('-')){
+    /* Date String */
+    responseObject['unix'] = new Date(input).getTime()
+    responseObject['utc'] = new Date(input).toUTCString()
+  }else{
+    /* Timestamp */
+    input = parseInt(input)
+    
+    responseObject['unix'] = new Date(input).getTime()
+    responseObject['utc'] = new Date(input).toUTCString()
+  }
   
-}else{
+  if(!responseObject['unix'] || !responseObject['utc']){
+    response.json({error: 'Invalid Date'})
+  }
   
-}
-  response.json(input)
+  
+  response.json(responseObject)
 })
 
+app.get('/api/timestamp', (request, response) => {
+  responseObject['unix'] = new Date().getTime()
+  responseObject['utc'] = new Date().toUTCString()
+  
+  response.json(responseObject)
+})
